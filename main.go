@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
-	"time"
 	"encoding/csv"
-	"os"
-	"log"
+	"fmt"
 	"io"
+	"log"
+	"math/rand"
+	"os"
+	"time"
 )
 
 type Pessoa struct {
@@ -16,7 +16,17 @@ type Pessoa struct {
 }
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	seed := time.Now().UnixNano()
+	file, err := os.Create("Seed.txt")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
+	file.WriteString(fmt.Sprintf("Amigo Secreto v1\n Sorteado às %v\nChave %v", time.Now(), seed))
+
+	rand.Seed(seed)
 }
 
 func readPessoas() []Pessoa {
@@ -25,14 +35,14 @@ func readPessoas() []Pessoa {
 
 	// Ler o arquivo
 	f, err := os.Open("Lista.csv")
-    
-	if err != nil {
-        log.Fatal(err)
-    }
 
-    // Fecha o arquivo no fim da função
-    defer f.Close()
-	
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Fecha o arquivo no fim da função
+	defer f.Close()
+
 	// Lê o CSV
 	reader := csv.NewReader(f)
 	for {
@@ -56,8 +66,8 @@ func readPessoas() []Pessoa {
 }
 
 // From:
-	// https://stackoverflow.com/questions/12264789/shuffle-array-in-go - go implementation
-	// https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle - algorithm
+// https://stackoverflow.com/questions/12264789/shuffle-array-in-go - go implementation
+// https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle - algorithm
 
 func shuffleList(lista []Pessoa) []Pessoa {
 	for i := range lista {
@@ -69,7 +79,7 @@ func shuffleList(lista []Pessoa) []Pessoa {
 }
 
 func main() {
-	fmt.Println("++ Amigo Secreto");
+	fmt.Println("++ Amigo Secreto")
 	lista := shuffleList(readPessoas())
 
 	for i := range lista {
