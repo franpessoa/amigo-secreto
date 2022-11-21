@@ -16,20 +16,6 @@ type Pessoa struct {
 	AmigoSecreto string
 }
 
-func init() {
-	seed := time.Now().UnixNano()
-	file, err := os.Create("Seed.txt")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer file.Close()
-	file.WriteString(fmt.Sprintf("Amigo Secreto v1\n Sorteado às %v\nChave %v", time.Now(), seed))
-
-	rand.Seed(seed)
-}
-
 func readPessoas() []Pessoa {
 	// Lista de pessoas
 	pessoas := []Pessoa{}
@@ -80,6 +66,18 @@ func shuffleList(lista []Pessoa) []Pessoa {
 }
 
 func main() {
+	seed := time.Now().UnixNano()
+	file, err := os.Create("Seed.txt")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
+	file.WriteString(fmt.Sprintf("Amigo Secreto v1\n Sorteado às %v\nChave %v", time.Now(), seed))
+
+	rand.Seed(seed)
+
 	fmt.Println("++ Amigo Secreto")
 	lista := shuffleList(readPessoas())
 
@@ -90,7 +88,7 @@ func main() {
 			lista[i].AmigoSecreto = lista[0].Nome
 		}
 
-		SendMail(lista[i].Mail, lista[i].Nome, lista[i].AmigoSecreto)
+		SendMail(lista[i].Mail, lista[i].Nome, lista[i].AmigoSecreto, seed)
 	}
 
 }

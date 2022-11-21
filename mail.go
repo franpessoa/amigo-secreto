@@ -12,11 +12,11 @@ import (
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Erro carregando .env")
 	}
 }
 
-func SendMail(to, name, as string) {
+func SendMail(to, name, as string, seed int64) {
 	MJ_KEY := os.Getenv("MJ_API_KEY")
 	MJ_SECRET := os.Getenv("MJ_API_SECRET")
 
@@ -27,7 +27,7 @@ func SendMail(to, name, as string) {
 		{
 			From: &mailjet.RecipientV31{
 				Email: "asecreto.go@gmail.com",
-				Name:  "Francisco",
+				Name:  "🎉 Amigo Secreto 🎉",
 			},
 			To: &mailjet.RecipientsV31{
 				mailjet.RecipientV31{
@@ -36,7 +36,7 @@ func SendMail(to, name, as string) {
 				},
 			},
 			Subject:  "Amigo Secreto",
-			HTMLPart: fmt.Sprintf("<h2>Amigo Secreto</h2><br><h3>O seu amigo secreto é:<br>	-> %v 🎉🎉🎉</h3>", as),
+			HTMLPart: fmt.Sprintf("<h2>Amigo Secreto</h2><br><h3>O seu amigo secreto é:<br>	-> %v 🎉🎉🎉</h3><br><br><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", as, seed),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
