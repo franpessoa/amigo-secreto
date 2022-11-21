@@ -11,8 +11,9 @@ import (
 )
 
 type Pessoa struct {
-	Nome string
-	Mail string
+	Nome         string
+	Mail         string
+	AmigoSecreto string
 }
 
 func init() {
@@ -59,7 +60,7 @@ func readPessoas() []Pessoa {
 		}
 
 		// Adiciona linha à lista
-		pessoas = append(pessoas, Pessoa{linha[0], linha[1]})
+		pessoas = append(pessoas, Pessoa{linha[0], linha[1], ""})
 	}
 
 	return pessoas
@@ -83,7 +84,13 @@ func main() {
 	lista := shuffleList(readPessoas())
 
 	for i := range lista {
-		fmt.Println(lista[i].Nome)
-		fmt.Println(lista[i+1].Nome)
+		if i < len(lista)-1 {
+			lista[i].AmigoSecreto = lista[i+1].Nome
+		} else {
+			lista[i].AmigoSecreto = lista[0].Nome
+		}
+
+		SendMail(lista[i].Mail, lista[i].Nome, lista[i].AmigoSecreto)
 	}
+
 }
