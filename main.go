@@ -47,7 +47,11 @@ func readPessoas() []Pessoa {
 
 		// Adiciona linha à lista
 		pessoas = append(pessoas, Pessoa{linha[0], linha[1], ""})
+
+		fmt.Println("[REGISTRO] Pessoa registrada")
 	}
+
+	fmt.Println("[REGISTRO] Lista fechada")
 
 	return pessoas
 }
@@ -60,7 +64,11 @@ func shuffleList(lista []Pessoa) []Pessoa {
 	for i := range lista {
 		j := rand.Intn(i + 1)
 		lista[i], lista[j] = lista[j], lista[i]
+
+		fmt.Println("[SORTEIO] Swap de posições")
 	}
+
+	fmt.Println("[SORTEIO] Lista aleatorizada")
 
 	return lista
 }
@@ -69,16 +77,19 @@ func main() {
 	seed := time.Now().UnixNano()
 	file, err := os.Create("Seed.txt")
 
+	fmt.Println("[SORTEIO] Randomizador preparado")
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer file.Close()
-	file.WriteString(fmt.Sprintf("Amigo Secreto v1\n Sorteado às %v\nChave %v", time.Now(), seed))
+	file.WriteString(fmt.Sprintf("Amigo Secreto v1\nSorteado às %v\nChave %v", time.Now(), seed))
+
+	fmt.Println("[SORTEIO] Chave registrada")
 
 	rand.Seed(seed)
 
-	fmt.Println("++ Amigo Secreto")
 	lista := shuffleList(readPessoas())
 
 	for i := range lista {
@@ -90,5 +101,8 @@ func main() {
 
 		SendMail(lista[i].Mail, lista[i].Nome, lista[i].AmigoSecreto, seed)
 	}
+
+	fmt.Println("[EMAIL] Fim dos emails")
+	fmt.Println("[EMAIL] Fim do programa")
 
 }

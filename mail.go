@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"strings"
+
 	"github.com/joho/godotenv"
 	"github.com/mailjet/mailjet-apiv3-go"
 )
@@ -16,7 +18,7 @@ func init() {
 	}
 }
 
-func SendMail(to, name, as string, seed int64) {
+func SendMail(to, nome, as string, seed int64) {
 	MJ_KEY := os.Getenv("MJ_API_KEY")
 	MJ_SECRET := os.Getenv("MJ_API_SECRET")
 
@@ -26,23 +28,26 @@ func SendMail(to, name, as string, seed int64) {
 	messagesInfo := []mailjet.InfoMessagesV31{
 		{
 			From: &mailjet.RecipientV31{
-				Email: "asecreto.go@gmail.com",
-				Name:  "🎉 Amigo Secreto 🎉",
+				Email: "amgsecreto.go@outlook.com",
+				Name:  "Amigo Secreto",
 			},
 			To: &mailjet.RecipientsV31{
 				mailjet.RecipientV31{
 					Email: to,
-					Name:  name,
+					Name:  nome,
 				},
 			},
 			Subject:  "Amigo Secreto",
-			HTMLPart: fmt.Sprintf("<h2>Amigo Secreto</h2><br><h3>O seu amigo secreto é:<br>	-> %v 🎉🎉🎉</h3><br><br><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", as, seed),
+			HTMLPart: fmt.Sprintf("<h2>%v, Seu Amigo Secreto foi sorteado!</h2><h3>E elu é (rufem os tambores):<br><img src=\"https://cdn.statically.io/og/🎉%v🎉.jpg alt=\"%v\" height=200px width=350px></h3><br><br><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", nome, strings.Replace(as, " ", "%20", 1), as, seed),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
 	res, err := mj.SendMailV31(&messages)
+
 	if err != nil {
+		log.Println(fmt.Sprintf("%v\n", res))
 		log.Fatal(err)
 	}
-	fmt.Printf("Data: %+v\n", res)
+
+	fmt.Println("[EMAIL] Email disparado para ", string(to))
 }
