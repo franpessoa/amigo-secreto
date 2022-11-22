@@ -92,6 +92,8 @@ func main() {
 
 	lista := shuffleList(readPessoas())
 
+	fmt.Println("[EMAIL] Envio iniciado")
+
 	for i := range lista {
 		if i < len(lista)-1 {
 			lista[i].AmigoSecreto = lista[i+1].Nome
