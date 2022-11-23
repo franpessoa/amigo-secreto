@@ -9,6 +9,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/mailjet/mailjet-apiv3-go"
+
+	"crypto/md5"
 )
 
 func init() {
@@ -38,7 +40,7 @@ func SendMail(to, nome, as string, seed int64) {
 				},
 			},
 			Subject:  "Amigo Secreto",
-			HTMLPart: fmt.Sprintf("<h2>%v, Seu Amigo Secreto foi sorteado!</h2><h3>E elu é (rufem os tambores):<br><img src=\"https://cdn.statically.io/og/🎉%v🎉.jpg alt=\"%v\" height=200px width=350px></h3><br><br><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", nome, strings.Replace(as, " ", "%20", 1), as, seed),
+			HTMLPart: fmt.Sprintf("<h2>%v, seu Amigo Secreto foi sorteado!</h2><h3>E elu é (rufem os tambores):<br><img src=\"https://cdn.statically.io/og/🎉%v🎉.jpg alt=\"%v\" height=200px width=350px></h3><br><br><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", nome, strings.Replace(as, " ", "%20", 1), as, seed),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
@@ -49,5 +51,5 @@ func SendMail(to, nome, as string, seed int64) {
 		log.Fatal(err)
 	}
 
-	fmt.Println("[EMAIL] Email disparado para ", string(to))
+	fmt.Println("[EMAIL] Email disparado para", fmt.Sprintf("%x", md5.Sum([]byte(to))))
 }
