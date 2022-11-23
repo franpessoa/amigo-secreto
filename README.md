@@ -267,7 +267,7 @@ A quinta é uma nota de rodapé com o link para o repositório e a _seed_ utiliz
 
 O resultado final fica assim:
 
-![](/home/fran/.var/app/com.github.marktext.marktext/config/marktext/images/2022-11-22-20-39-18-image.png)
+![](http://0x0.st/oUzq.png)
 
 #### Conclusão
 
