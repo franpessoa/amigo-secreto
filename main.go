@@ -75,20 +75,20 @@ func shuffleList(lista []Pessoa) []Pessoa {
 
 func main() {
 	seed := time.Now().UnixNano()
-	file, err := os.Create("Seed.txt")
+	rand.Seed(seed)
 
 	fmt.Println("[SORTEIO] Randomizador preparado")
+
+	file, err := os.Create("seed.key")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer file.Close()
-	file.WriteString(fmt.Sprintf("Amigo Secreto v1\nSorteado às %v\nChave %v", time.Now(), seed))
+	file.WriteString(fmt.Sprintf("%v", seed))
 
 	fmt.Println("[SORTEIO] Chave registrada")
-
-	rand.Seed(seed)
 
 	lista := shuffleList(readPessoas())
 
@@ -106,5 +106,4 @@ func main() {
 
 	fmt.Println("[EMAIL] Fim dos emails")
 	fmt.Println("[EMAIL] Fim do programa")
-
 }
