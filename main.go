@@ -91,6 +91,7 @@ func main() {
 	fmt.Println("[SORTEIO] Chave registrada")
 
 	lista := shuffleList(readPessoas())
+	lista = shuffleList(lista)
 
 	fmt.Println("[EMAIL] Envio iniciado")
 
