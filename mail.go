@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 
-	"strings"
-
 	"github.com/joho/godotenv"
 	"github.com/mailjet/mailjet-apiv3-go"
 
@@ -40,7 +38,7 @@ func SendMail(to, nome, as string, seed int64) {
 				},
 			},
 			Subject:  "Amigo Secreto",
-			HTMLPart: fmt.Sprintf("<h2>%v, seu Amigo Secreto foi sorteado!</h2><h3>E elu é (rufem os tambores):<br><img src=\"https://cdn.statically.io/og/🎉%v🎉.jpg alt=\"%v\" height=200px width=350px></h3><br><br><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", nome, strings.Replace(as, " ", "%20", 1), as, seed),
+			HTMLPart: fmt.Sprintf("<h2>%v, seu Amigo Secreto foi sorteado!<br><br>E el(e/a) é:<br><br>🎉 %v 🎉<br><br></h2><p><a href=\"https://github.com/franpessoa/amigo-secreto\">Código Fonte</a>  ||  Seed: <strong>%d</strong>", nome, as, seed),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
