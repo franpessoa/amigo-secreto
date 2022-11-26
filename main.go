@@ -92,6 +92,7 @@ func main() {
 
 	lista := shuffleList(readPessoas())
 	lista = shuffleList(lista)
+	lista = shuffleList(lista)
 
 	fmt.Println("[EMAIL] Envio iniciado")
 
