@@ -95,6 +95,8 @@ func main() {
 
 	fmt.Println("[EMAIL] Envio iniciado")
 
+	debug := true
+
 	for i := range lista {
 		if i < len(lista)-1 {
 			lista[i].AmigoSecreto = lista[i+1].Nome
@@ -102,7 +104,11 @@ func main() {
 			lista[i].AmigoSecreto = lista[0].Nome
 		}
 
-		SendMail(lista[i].Mail, lista[i].Nome, lista[i].AmigoSecreto, seed)
+		if debug {
+			Debug(lista[i])
+		} else {
+			SendMail(lista[i].Mail, lista[i].Nome, lista[i].AmigoSecreto, seed)
+		}
 	}
 
 	fmt.Println("[EMAIL] Fim dos emails")
