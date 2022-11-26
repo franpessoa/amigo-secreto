@@ -61,11 +61,13 @@ func readPessoas() []Pessoa {
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle - algorithm
 
 func shuffleList(lista []Pessoa) []Pessoa {
-	for i := range lista {
+	i := len(lista) - 1
+	for i > 0 {
 		j := rand.Intn(i + 1)
 		lista[i], lista[j] = lista[j], lista[i]
 
 		fmt.Println("[SORTEIO] Swap de posições")
+		i -= 1
 	}
 
 	fmt.Println("[SORTEIO] Lista aleatorizada")
@@ -91,7 +93,6 @@ func main() {
 	fmt.Println("[SORTEIO] Chave registrada")
 
 	lista := shuffleList(readPessoas())
-	lista = shuffleList(lista)
 	lista = shuffleList(lista)
 
 	fmt.Println("[EMAIL] Envio iniciado")
