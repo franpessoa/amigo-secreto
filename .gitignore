@@ -1,5 +1,2 @@
-.env
-Seed.text
-amigo-secreto
-Lista.csv
-seed.key
+target/
+dist/
