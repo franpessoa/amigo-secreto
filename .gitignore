@@ -3,3 +3,7 @@ Seed.text
 amigo-secreto
 Lista.csv
 seed.key
+
+# Added by cargo
+
+/target
