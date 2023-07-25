@@ -1,0 +1,20 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.6.19"
+axum-auth = "0.4.0"
+chrono = "0.4.26"
+diesel = { version = "2.1.0", features = ["sqlite", "chrono", "r2d2"] }
+futures = "0.3.28"
+hyper = "0.14.27"
+r2d2 = "0.8.10"
+tokio = { version = "1.29.1", features = ["full"] }
+tower = { version = "0.4.13", features = ["tracing"] }
+tower-http = { version = "0.4.3", features = ["tracing", "fs"] }
+tracing = "0.1.37"
+tracing-subscriber = "0.3.17"

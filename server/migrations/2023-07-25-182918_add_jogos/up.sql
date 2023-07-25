@@ -1,0 +1,7 @@
+CREATE TABLE jogos(
+   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+   name TEXT NOT NULL,
+   created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+   hashed_password TEXT NOT NULL,
+   game_password TEXT
+)
