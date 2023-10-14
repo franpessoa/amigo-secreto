@@ -4,14 +4,15 @@ use serde::{Deserialize, Serialize};
 /// Struct that represents a game participant
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Participant {
-    name: String,
-    email: String
+    pub name: String,
+    pub email: String
 }
 
 // Internal representation of JSON document
 #[derive(Serialize, Deserialize, Debug)]
-struct Game {
-    participants: Vec<Participant>
+pub struct Game {
+    pub participants: Vec<Participant>,
+    pub seed: Option<String>
 }
 
 /// Reads the participants of a game from a JSON file
