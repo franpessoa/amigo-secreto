@@ -2,6 +2,10 @@ use std::path::Path;
 use clap::Parser;
 use amigo_secreto::participants::read_participants;
 use amigo_secreto::rng::gen_rng;
+use lettre::message::header::ContentType;
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::transport::smtp::client::{Tls, TlsParameters};
+use lettre::{Message, SmtpTransport, Transport};
 use rand::prelude::*;
 
 #[derive(Parser, Debug)]
@@ -15,6 +19,7 @@ struct Args {
 }
 
 fn main() {
+    dotenvy::dotenv().ok();
     let args = Args::parse();
     let path =  Path::new(&args.data);
     
@@ -25,4 +30,6 @@ fn main() {
 
     participants.shuffle(&mut rng);
     println!("Resultado : {:?}", &participants);
+
+    
 }

@@ -7,7 +7,9 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
+dotenvy = "0.15.7"
 hashbrown = "0.14.1"
+lettre = { version = "0.10.4", features = ["rustls"] }
 rand = "0.8.5"
 rand_chacha = { version = "0.3.1", features = ["simd"] }
 rand_pcg = "0.3.1"
