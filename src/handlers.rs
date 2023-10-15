@@ -1,6 +1,5 @@
 use axum::Json;
 use rand::seq::SliceRandom;
-use rayon::result;
 use crate::{participants::{Game, Participant}, rng::gen_rng, email::send};
 use serde::Serialize;
 

@@ -22,4 +22,4 @@ serde = { version = "1.0.189", features = ["derive", "serde_derive"] }
 serde_json = "1.0.107"
 tokio = { version = "1.33.0", features = ["full"] }
 tower = "0.4.13"
-tower-http = { version = "0.4.4", features = ["fs"] }
+tower-http = { version = "0.4.4", features = ["fs", "cors", "set-header", "tokio", "full"] }
