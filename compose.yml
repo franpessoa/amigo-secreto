@@ -1,0 +1,7 @@
+version: '3.3'
+
+services:
+  amigo_secreto:
+    build: .
+    env_file:
+      - .env
