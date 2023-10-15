@@ -8,7 +8,7 @@ use tower_http::{services::{ServeDir, ServeFile}, cors::{Any, CorsLayer}};
 async fn main() {
     dotenvy::dotenv().ok();
 
-
+    println!("Starting server");
     let app = Router::new()
         .route("/game", post(game))
         .nest_service("/", ServeDir::new("public").append_index_html_on_directories(true))

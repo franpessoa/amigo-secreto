@@ -19,7 +19,7 @@ RUN cargo build --release
 #RUN rm ./target/release/deps/amigo-secreto*
 
 # Build frontend
-FROM node:bookworm as frontent-build
+FROM node:bookworm as frontend-build
 WORKDIR /usr/src/amigo-secreto/frontend
 COPY ./frontend/package.json ./frontend/yarn.lock ./
 
@@ -33,7 +33,8 @@ RUN yarn build
 FROM rust:slim-bookworm
 WORKDIR /
 COPY --from=rust-build /usr/src/amigo-secreto/target/release/amigo-secreto /
-COPY --from=frontent-build /usr/src/amigo-secreto/public/ /
+COPY --from=frontend-build /usr/src/amigo-secreto/public/ /public
+ADD ./.env /
 RUN ls
 CMD ["./amigo-secreto"]
 
