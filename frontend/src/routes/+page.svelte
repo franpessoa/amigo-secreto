@@ -72,11 +72,11 @@
             })
 
             if (res.status != 200) {
-                res = res.json()
+                res = await res.json()
                 alert(res["error"])
                 download("erro.json", JSON.stringify(res))
             } else {
-                res = res.json()
+                res = await res.json()
                 alert(`Sorteio concluído com semente ${res["seed"]}`)
                 download("resultado.json", JSON.stringify(res))
             }
