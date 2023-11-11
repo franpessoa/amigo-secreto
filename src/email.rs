@@ -2,9 +2,10 @@ use std::env;
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::client::{Tls, TlsParameters};
-use lettre::{Message, SmtpTransport, Transport};
+use lettre::{Message, AsyncSmtpTransport, AsyncTransport};
+use lettre::Tokio1Executor;
 
-fn send(to: String, selected: String) -> Result<lettre::transport::smtp::response::Response, lettre::transport::smtp::Error> {
+async fn send(to: String, selected: String) -> Result<lettre::transport::smtp::response::Response, lettre::transport::smtp::Error> {
     let email = Message::builder()
         .from(std::env::var("SMTP_SENDER").unwrap().parse().unwrap())
         .to(to.parse().unwrap())
@@ -22,12 +23,12 @@ fn send(to: String, selected: String) -> Result<lettre::transport::smtp::respons
         .build()
         .unwrap();
 
-    let mailer = SmtpTransport::relay(&env::var("SMTP_RELAY").unwrap())
+    let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay(&env::var("SMTP_RELAY").unwrap())
         .unwrap()
         .port(2525)
         .tls(Tls::Required(tls_param))
         .credentials(credentials)
         .build();
 
-    mailer.send(&email)
+    mailer.send(email).await
 }
