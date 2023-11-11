@@ -1,22 +1,35 @@
-use axum::{Router, routing::{post, get_service}};
-use amigo_secreto::handlers::*;
-use hyper::{Request, Body, StatusCode};
-use tower_http::{services::{ServeDir, ServeFile}, cors::{Any, CorsLayer}};
+use std::path::Path;
+use clap::Parser;
+use amigo_secreto::participants::read_participants;
+use amigo_secreto::rng::gen_rng;
+use lettre::message::header::ContentType;
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::transport::smtp::client::{Tls, TlsParameters};
+use lettre::{Message, SmtpTransport, Transport};
+use rand::prelude::*;
 
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about)]
+struct Args {
+    #[arg(short, long)]
+    data: String,
 
-#[tokio::main]
-async fn main() {
+    #[arg(short, long)]
+    seed: Option<String>
+}
+
+fn main() {
     dotenvy::dotenv().ok();
+    let args = Args::parse();
+    let path =  Path::new(&args.data);
+    
+    let mut participants = read_participants(path).unwrap();
+    
+    let (mut rng, seed) = gen_rng(None);
+    println!("Sorteio com chave : {}", seed);
 
-    println!("Starting server");
-    let app = Router::new()
-        .route("/game", post(game))
-        .nest_service("/", ServeDir::new("public").append_index_html_on_directories(true))
-        .layer(CorsLayer::new().allow_origin(Any));
+    participants.shuffle(&mut rng);
+    println!("Resultado : {:?}", &participants);
 
     
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap()
 }
