@@ -2,7 +2,7 @@ use std::{path::Path, fs};
 use serde::{Deserialize, Serialize};
 
 /// Struct that represents a game participant
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Participant {
     pub name: String,
     pub email: String
