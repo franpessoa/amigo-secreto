@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 /// Struct that represents a game participant
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Participant {
-    pub name: String,
+    pub nome: String,
     pub email: String
 }
 
@@ -16,11 +16,17 @@ pub struct Game {
 }
 
 /// Reads the participants of a game from a JSON file
-pub fn read_participants(json_path: &Path) 
-    -> Option<Vec<Participant>> 
+pub fn read_participants(path: &Path) 
+    -> Result<Vec<Participant>, std::io::Error>
 {
-    let file = fs::read_to_string(json_path).ok()?;
-    let data: Game = serde_json::from_str(&file).ok()?;
+    let mut results = vec![];
 
-    return Some(data.participants)
+    let mut rdr = csv::Reader::from_path(path)?;
+    for result in rdr.deserialize() 
+    {
+        let record: Participant = result?;
+        results.push(record)
+    }
+
+    return Ok(results)
 }
