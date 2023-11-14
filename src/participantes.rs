@@ -2,7 +2,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 /// Struct that represents a game participant
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Participante {
     #[serde(rename = "Nome")]
     pub nome: String,
@@ -26,7 +26,8 @@ pub fn read_participants(path: &Path)
     let mut rdr = csv::Reader::from_path(path)?;
     for result in rdr.deserialize() 
     {
-        let record: Participante = result?;
+        let mut record: Participante = result?;
+        record.nome = record.nome.trim().to_string();
         results.push(record)
     }
 
