@@ -4,7 +4,7 @@ use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::client::{Tls, TlsParameters};
 use lettre::{Message, AsyncSmtpTransport, AsyncTransport};
 use lettre::Tokio1Executor;
-use crate::participants::Participant;
+use crate::participantes::Participante;
 
 pub type EmailResult = Result<lettre::transport::smtp::response::Response, lettre::transport::smtp::Error>;
 async fn send(to: String, selected: String) -> EmailResult
@@ -37,7 +37,7 @@ async fn send(to: String, selected: String) -> EmailResult
     return mailer.send(email).await
 }
 
-pub async fn iter_send(p: Vec<Participant>) -> Vec<EmailResult>
+pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
 {
 
     let lenght = p.len();

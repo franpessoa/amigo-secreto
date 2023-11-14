@@ -1,6 +1,6 @@
 use std::path::Path;
 use clap::Parser;
-use amigo_secreto::participants::read_participants;
+use amigo_secreto::participantes::read_participants;
 use amigo_secreto::rng::gen_rng;
 use rand::prelude::*;
 use amigo_secreto::email::iter_send;
