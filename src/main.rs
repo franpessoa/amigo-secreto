@@ -44,7 +44,7 @@ async fn main() {
     result_table.add_row(row!["N°", "Nome", "Resultado"]);
     for (idx, i) in rs.iter().enumerate() {
 
-        result_table.add_row(row![idx, participants.get(idx).unwrap().name, format!("{:?}", i)]);
+        result_table.add_row(row![idx, participants.get(idx).unwrap().nome, format!("{:?}", i)]);
         
     }
 

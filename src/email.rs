@@ -49,9 +49,9 @@ pub async fn iter_send(p: Vec<Participant>) -> Vec<EmailResult>
         let participant = i.1;
 
         if i.0 >= lenght - 1 {
-            selected = p2[0].name.clone()
+            selected = p2[0].nome.clone()
         } else {
-            selected = p2[i.0 + 1].name.clone()
+            selected = p2[i.0 + 1].nome.clone()
         }
 
         handles.push(
