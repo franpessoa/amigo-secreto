@@ -30,5 +30,5 @@ pub fn read_participants(path: &Path)
         results.push(record)
     }
 
-    return Ok(results)
+    Ok(results)
 }

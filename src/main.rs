@@ -4,7 +4,7 @@ use amigo_secreto::participantes::read_participants;
 use amigo_secreto::rng::gen_rng;
 use rand::prelude::*;
 use amigo_secreto::email::iter_send;
-use chrono;
+
 use colored::Colorize;
 
 extern crate prettytable;

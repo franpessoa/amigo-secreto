@@ -16,5 +16,5 @@ pub fn gen_rng(seed: Option<String>) -> (ChaCha20Rng, String) {
         }
     };
 
-    return (Seeder::from(&rng_seed).make_rng(), rng_seed.clone())
+    (Seeder::from(&rng_seed).make_rng(), rng_seed.clone())
 }
