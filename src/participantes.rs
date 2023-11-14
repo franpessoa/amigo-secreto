@@ -1,10 +1,12 @@
-use std::{path::Path, fs};
+use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 /// Struct that represents a game participant
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Participante {
+    #[serde(rename = "Nome")]
     pub nome: String,
+    #[serde(rename = "Email")]
     pub email: String
 }
 

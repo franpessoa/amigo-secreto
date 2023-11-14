@@ -33,20 +33,19 @@ async fn main() {
     participants.shuffle(&mut rng);
 
     let mut table = Table::new();
-    table.add_row(row!["Semente", seed]);
-    table.add_row(row!["Horário", chrono::offset::Local::now()]);
+    table.add_row(row!["Semente".underline(), seed]);
+    table.add_row(row!["Horário".underline(), chrono::offset::Local::now()]);
     println!("{}","Sorteio: ".bold());
     table.printstd();
     println!("\n");
 
     let rs = iter_send(participants.clone()).await;
     let mut result_table = Table::new();
-    result_table.add_row(row!["N°", "Nome", "Resultado"]);
+    result_table.add_row(row!["N°".underline(), "Nome".underline(), "Resultado".underline()]);
     for (idx, i) in rs.iter().enumerate() {
-
-        result_table.add_row(row![idx, participants.get(idx).unwrap().nome, format!("{:?}", i)]);
-        
+        result_table.add_row(row![ idx, participants.get(idx).unwrap().nome, if i.is_ok() {"Sucesso".to_owned()} else { format!("{:?}", i) } ]); 
     }
 
+    println!("{}","Envios: ".bold());
     result_table.printstd();
 }

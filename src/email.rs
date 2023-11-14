@@ -7,14 +7,14 @@ use lettre::Tokio1Executor;
 use crate::participantes::Participante;
 
 pub type EmailResult = Result<lettre::transport::smtp::response::Response, lettre::transport::smtp::Error>;
-async fn send(to: String, selected: String) -> EmailResult
+async fn send(to: String, selected: String, name : String) -> EmailResult
 {
     let email = Message::builder()
         .from(std::env::var("SMTP_SENDER").unwrap().parse().unwrap())
         .to(to.parse().unwrap())
         .subject("Teste")
-        .header(ContentType::TEXT_PLAIN)
-        .body(String::from(format!("Parabéns! Você tirou {}", selected)))
+        .header(ContentType::TEXT_HTML)
+        .body(String::from(format!("Parabéns, {}! Você tirou {}<br><br>  Se isso for spam, <a href=\"{{unsubscribe}}\">não quero receber mais emails</a>", name, selected)))
         .unwrap();
 
     let credentials = Credentials::new(
@@ -56,7 +56,7 @@ pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
         }
 
         handles.push(
-            tokio::spawn(async move { send(to, selected) }).await.unwrap()
+            tokio::spawn(async move { send(to, selected, participant.nome) }).await.unwrap()
         );
     }
 
