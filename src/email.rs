@@ -56,7 +56,7 @@ pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
         }
 
         handles.push(
-            tokio::spawn(async move { send(to, selected, participant.nome) }).await.unwrap()
+            tokio::spawn(async {send(to, selected, participant.nome)}).await.unwrap()
         );
     }
 
