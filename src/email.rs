@@ -7,7 +7,7 @@ use lettre::Tokio1Executor;
 use crate::participants::Participant;
 
 pub type EmailResult = Result<lettre::transport::smtp::response::Response, lettre::transport::smtp::Error>;
-pub async fn send(to: String, selected: String) -> EmailResult
+async fn send(to: String, selected: String) -> EmailResult
 {
     let email = Message::builder()
         .from(std::env::var("SMTP_SENDER").unwrap().parse().unwrap())
