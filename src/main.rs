@@ -1,22 +1,52 @@
-use axum::{Router, routing::{post, get_service}};
-use amigo_secreto::handlers::*;
-use hyper::{Request, Body, StatusCode};
-use tower_http::{services::{ServeDir, ServeFile}, cors::{Any, CorsLayer}};
+use std::path::Path;
+use clap::Parser;
+use amigo_secreto::participantes::read_participants;
+use amigo_secreto::rng::gen_rng;
+use rand::prelude::*;
+use amigo_secreto::email::iter_send;
+use chrono;
+use colored::Colorize;
 
+extern crate prettytable;
+use prettytable::{Table, row};
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about)]
+struct Args {
+    #[arg(short, long)]
+    data: String,
+
+    #[arg(short, long)]
+    seed: Option<String>
+}
 
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
-
-    println!("Starting server");
-    let app = Router::new()
-        .route("/game", post(game))
-        .nest_service("/", ServeDir::new("public").append_index_html_on_directories(true))
-        .layer(CorsLayer::new().allow_origin(Any));
-
+    let args = Args::parse();
+    let path =  Path::new(&args.data);
     
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap()
+    let mut participants = read_participants(path)
+        .unwrap();
+    
+    let (mut rng, seed) = gen_rng(args.seed);
+    participants.shuffle(&mut rng);
+
+    let mut table = Table::new();
+    table.add_row(row!["Semente", seed]);
+    table.add_row(row!["Horário", chrono::offset::Local::now()]);
+    println!("{}","Sorteio: ".bold());
+    table.printstd();
+    println!("\n");
+
+    let rs = iter_send(participants.clone()).await;
+    let mut result_table = Table::new();
+    result_table.add_row(row!["N°", "Nome", "Resultado"]);
+    for (idx, i) in rs.iter().enumerate() {
+
+        result_table.add_row(row![idx, participants.get(idx).unwrap().nome, format!("{:?}", i)]);
+        
+    }
+
+    result_table.printstd();
 }
