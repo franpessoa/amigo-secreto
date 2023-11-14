@@ -2,9 +2,8 @@ use std::path::Path;
 use clap::Parser;
 use amigo_secreto::participants::read_participants;
 use amigo_secreto::rng::gen_rng;
-use lettre::transport::smtp::response::Code;
 use rand::prelude::*;
-use amigo_secreto::email::{iter_send, EmailResult};
+use amigo_secreto::email::iter_send;
 use chrono;
 use colored::Colorize;
 
@@ -31,10 +30,7 @@ async fn main() {
         .unwrap();
     
     let (mut rng, seed) = gen_rng(args.seed);
-    println!("Sorteio com chave : {}", seed);
-
     participants.shuffle(&mut rng);
-    println!("Resultado : {:?}", &participants);
 
     let mut table = Table::new();
     table.add_row(row!["Semente", seed]);
@@ -53,5 +49,4 @@ async fn main() {
     }
 
     result_table.printstd();
-    
 }
