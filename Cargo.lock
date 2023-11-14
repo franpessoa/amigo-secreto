@@ -58,6 +58,7 @@ dependencies = [
  "chrono",
  "clap",
  "colored",
+ "csv",
  "dotenvy",
  "futures",
  "hashbrown",
