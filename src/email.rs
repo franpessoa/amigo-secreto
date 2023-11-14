@@ -47,6 +47,7 @@ pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
     for i in p.into_iter().enumerate() {
         let selected: String;
         let participant = i.1;
+        let to = format!("{} <{}>", participant.nome, participant.email.clone());
 
         if i.0 >= lenght - 1 {
             selected = p2[0].nome.clone()
@@ -55,7 +56,7 @@ pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
         }
 
         handles.push(
-            tokio::spawn(async move { send(participant.email.clone(), selected) }).await.unwrap()
+            tokio::spawn(async move { send(to, selected) }).await.unwrap()
         );
     }
 
