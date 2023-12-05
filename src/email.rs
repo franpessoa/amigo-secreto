@@ -12,9 +12,9 @@ async fn send(to: String, selected: String, name : String) -> EmailResult
     let email = Message::builder()
         .from(std::env::var("SMTP_SENDER").unwrap().parse().unwrap())
         .to(to.parse().unwrap())
-        .subject("Teste")
+        .subject("O sorteio foi feito!")
         .header(ContentType::TEXT_HTML)
-        .body(format!("Parabéns, {}! Você tirou {}<br><br>  Se isso for spam, <a href=\"{{unsubscribe}}\">não quero receber mais emails</a>", name, selected))
+        .body(format!("Parabéns, {}! Você tirou {} <a style=\"hidden\" href={{unsubscribe}}></a>", name, selected))
         .unwrap();
 
     let credentials = Credentials::new(
@@ -37,7 +37,7 @@ async fn send(to: String, selected: String, name : String) -> EmailResult
     mailer.send(email).await
 }
 
-pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
+pub async fn iter_send(p: Vec<Participante>) -> Vec<lettre::transport::smtp::response::Response>
 {
 
     let lenght = p.len();
@@ -56,9 +56,9 @@ pub async fn iter_send(p: Vec<Participante>) -> Vec<EmailResult>
         }
 
         handles.push(
-            tokio::spawn(async {send(to, selected, participant.nome)}).await.unwrap()
+            tokio::spawn(async {send(to, selected, participant.nome)}).await.unwrap().await.unwrap()
         );
     }
 
-    futures::future::join_all(handles).await
+    handles
 }
