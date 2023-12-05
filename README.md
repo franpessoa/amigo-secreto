@@ -1,4 +1,9 @@
-# Amigo secreto
+# [WIP] Amigo secreto - TEXTO DESATUALIZADO E INCOMPLETO!!
+## Para resolver
+ - melhorar a documentação de tipos e funções
+ - completamente remover o código asíncrono
+ - email de mock para ser ignorado
+
 
 Esse site do amigo secreto tem duas partes - o algoritmo que cuida do jogo e o site em si. Esse texto vai explicar um pouco de como funciona o algoritmo, o sorteio e como os dados são recebidos e processados
 
