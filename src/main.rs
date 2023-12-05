@@ -31,6 +31,7 @@ async fn main() {
     
     let (mut rng, seed) = gen_rng(args.seed);
     participants.shuffle(&mut rng);
+    assert_ne!(read_participants(path).unwrap(), participants);
 
     let mut table = Table::new();
     table.add_row(row!["Semente".underline(), seed]);
@@ -43,7 +44,7 @@ async fn main() {
     let mut result_table = Table::new();
     result_table.add_row(row!["N°".underline(), "Nome".underline(), "Resultado".underline()]);
     for (idx, i) in rs.iter().enumerate() {
-        result_table.add_row(row![ idx, participants.get(idx).unwrap().nome, if i.is_ok() {"Sucesso".to_owned()} else { format!("{:?}", i) } ]); 
+        result_table.add_row(row![ idx, participants.get(idx).unwrap().nome, format!("{:?}", i)]); 
     }
 
     println!("{}","Envios: ".bold());
