@@ -1,92 +1,167 @@
-# amigo-secreto
+# [WIP] Amigo secreto - TEXTO DESATUALIZADO E INCOMPLETO!!
+## Para resolver
+ - melhorar a documentação de tipos e funções
+ - completamente remover o código asíncrono
+ - email de mock para ser ignorado
 
 
+Esse site do amigo secreto tem duas partes - o algoritmo que cuida do jogo e o site em si. Esse texto vai explicar um pouco de como funciona o algoritmo, o sorteio e como os dados são recebidos e processados
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/franpessoa/amigo-secreto.git
-git branch -M main
-git push -uf origin main
+A principar estrutura de dados é o participante, definido como 
+```rust
+// No arquivo src/participant.rs
+pub struct Participante {
+    pub nome: String,
+    pub email: String
+}
 ```
 
-## Integrate with your tools
+Isso significa que um `Participante` é uma estrutura com dois campos: um nome e um e-mail. Podemos criar um Participante com o nome de "Luís" e email de "luís@exemplo.org" ou um com nome de "Ana" e email de "a.na@gmail.com".
+ 
+A linha em cima dessa definição tem alguns ~hieróglifos antigos~ macros que definem algumas coisas importantes sobre essa estrutura. Um **macro** é um código que produz mais código, e roda antes de todo o resto. Assim, quando essa estrutura for utilizada, os macros já terão gerado para ela algumas propriedades úteis.
 
-- [ ] [Set up project integrations](https://gitlab.com/franpessoa/amigo-secreto/-/settings/integrations)
+~Os escritos satãnicos~ A linha é a seguinte:
+```rust
+#[derive(Serialize, Deserialize, Debug)]
+```
+Eu disse que era confuso! `#[derive( )]` só significa que nós estamos utilizando um macro, portanto não importa muito. O que importa é
 
-## Collaborate with your team
+ - `Serialize` significa que essa estrutura é serializável, ou seja, pode ser transformada em uma representação de texto
+ - `Deserialize` significa que essa estrutura é deserializável, ou seja, pode ser induzida a partir de uma representação de texto
+ 
+Que representação de texto é essa? Existem várias - algumas das mais comuns são YAML, TOML, e, a que é usada aqui, JSON:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+```json
+{
+    "participantes": [
+        {
+            "nome": "Leocrécio",
+            "email": "leo@gmail.com"
+        },
+        {
+            "nome": "Fernanda",
+            "email": "fernanda.f@hotmail.com"
+        },
+        {
+            "nome": "Andrew",
+            "email": "a@a.org"
+        },
+    ]
+}
+```
 
-## Test and Deploy
+Isso aqui representa três participantes: o Leocrécio, a Fernanda e o Andrew, cada qual com seu e-mail.
 
-Use the built-in continuous integration in GitLab.
+É importante que essa estrutura tenha essas propriedades porque nós não vamos receber esses participantes como uma série de campos certinhos - nós vamos receber de um navegador de alguém. E precisamos ter uma estrutura que os dois lados da conversa entendam.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+A parte que cuida de receber e processare os dados é essa função, que engloba quase tudo:
+```rust
+pub async fn jogo(Json(dados): Json<Jogo>) -> Result<Json<JogoSucesso>, Json<JogoErro>> {
+    let (mut rng, seed) = gen_rng(dados.seed);
+    let mut participantes = data.participantes;
 
-***
+    participantes.shuffle(&mut rng);
 
-# Editing this README
+    let mut handles = vec![];
+    for (idx, participante) in participantes.iter().enumerate() {
+        let selecionado = match participantes.get(idx + 1) {
+            Some(p) => &p.nome,
+            None => &(&participantes).get(0).unwrap().name
+        };
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+        let email_resultado = send(
+            format!("{} <{}>", participante.name, participante.email), 
+            selecionado.to_owned()
+        );
+        
+        handles.push(tokio::spawn(email_resultado))
+    }
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+    let resultados = futures::future::join_all(handles).await;
+    for j in resultados {
+        match j {
+            Err(e) => return Err(Json(JogoErro::new(e.to_string()))),
+            Ok(_) => continue
+        }
+    }
 
-## Name
-Choose a self-explaining name for your project.
+    return Ok(Json(JogoSucesso::new(seed, participantes)))
+}
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Ela é bem complexa, então vamos por partes:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```rust
+pub async fn
+```
+declara uma função pública assíncrona. Pública tem a ver com a visibilidade interna desse código, então não vamos nos preocupar com isso. Assíncrona eu explico mais para frente.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```rust
+jogo(Json(dados): Json<Jogo>) -> Result<Json<JogoSucesso>, Json<JogoErro>>
+```
+Isso aqui é a assinatura da função. funciona asssim
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```
+nome_da_função(parametros_de_entrada) -> tipo_de_saída
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+`jogo()` é o nome dessa função. Ela tem uma entrada `dados`, que vai ser encapsulada em `Json(dados)` para que aconteca a decodificação da representação em Json.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Parâmetros precisam ter um tipo, declarado assim:
+```
+nome_da_função(parametro_1: tipo_1, parametro_2: tipo_2)
+```
+Nesse caso, `Json(dados)` tem o tipo `Json<Jogo>`. Os <> significam que Json é um **tipo genérico**, que pode ser formado por vários outros tipos - nesse caso, o tipo `Jogo`
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+`Jogo` é uma outra estrutura, declarada como
+```rust
+pub struct Jogo {
+    pub participantes: Vec<Participante>,
+    pub seed: Option<String>
+}
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Ela tem dois campos: um é uma lista (`Vec<>)` de `Participante` é o outro é, opcionalmente, uma semente. Semente tem a ver com o sorteio, que vêm daqui a pouco.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Agora sabemos que essa função se chama `jogo` é leva um parâmetro `dados` do tipo `Jogo`. Mas o que ela retorna?
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+```rust
+Result<Json<JogoSucesso>, Json<JogoErro>>
+```
+O `Result<T, E>` significa ou um ou outro. Portanto, se der tudo certo,  retornamos o primeiro - `T`, e se der errado retornamos `E`.
+Nesse caso temos que:
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+ - Se ser tudo certo, retornamos `Json<JogoSucesso>`
+ - Se der errado, retornamos `Json<JogoErro>`
+ 
+ Nós já sabemos que o `Json<>` só está aqui para cuidar de transformar essas estruturas em/de texto. `JogoSucesso` e `JogoErro` são outras estruturas que só existem para que representar as possibilidades de saída, então não precisamos falar delas aqui
 
-## License
-For open source projects, say how it is licensed.
+Próxima linha: vamos falar de sorteio
+```rust
+let (mut rng, seed) = gen_rng(dados.seed);
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+`gen_rng()` é uma função importante. Ela cuida de preparar o gerador de números aleatórios que vai ser usado no sorteio, fazendo o seguinte:
+
+```rust
+pub fn gen_rng(seed: Option<String>) -> (ChaCha20Rng, String) {
+    let rng_seed = match seed {
+        Some(s) => s,
+        None => {
+            let seed: String = ChaCha20Rng::from_entropy()
+                .sample_iter(&Alphanumeric)
+                .take(16)
+                .map(char::from)
+                .collect();
+            
+            seed
+        }
+    };
+
+    return (Seeder::from(&rng_seed).make_rng(), rng_seed.clone())
+}
+```
+Lembra que a entrada `Jogo` tinha um parâmetro `seed`? É aqui que ele entra.
+
+Uma semente é um número, texto, qualquer coisa, que vai ser usada para gerar os números aleatórios. Toda vez que você gera um número aleatório, você está também criando outra semente para ele.
+**Toda vez que u
