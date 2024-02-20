@@ -1,5 +1,12 @@
 # Amigo secreto
 
+## Índice
+ * [Funcionamento do sorteio](#funcionamento-do-sorteio)
+ * [Uso](#uso)
+    * [Compilação](#compilação)
+    * [Como rodar](#rodando)
+ * [Licença](#licença)
+
 ## Funcionamento do sorteio
 
 A principar estrutura de dados é o participante, definido como 
@@ -136,5 +143,6 @@ Por padrão, utiliza-se a porta 2525. Não há como configurar isso, ainda.
  * configuração de SMTP
 
 ## Licença
-Esse programa está sobre a licença código-aberto MIT
+Esse programa está sobre a licença código-aberto MIT.
+
 Leia o arquivo `LICENSE` para saber mais
