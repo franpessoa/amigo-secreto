@@ -1,11 +1,8 @@
 use std::path::Path;
 use clap::Parser;
-use amigo_secreto::participantes::read_participants;
-use amigo_secreto::rng::gen_rng;
-use rand::prelude::*;
-use amigo_secreto::email::iter_send;
-
+use amigo_secreto::{jogo::Jogo, participantes::read_participants};
 use colored::Colorize;
+
 
 extern crate prettytable;
 use prettytable::{Table, row};
@@ -20,33 +17,34 @@ struct Args {
     seed: Option<String>
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
+    println!("Sorteio de amigo secreto");
+
+    // lê variaveis de ambiente
     dotenvy::dotenv().ok();
     let args = Args::parse();
     let path =  Path::new(&args.data);
     
-    let mut participants = read_participants(path)
+    let participantes = read_participants(path)
         .unwrap();
+
+    let mut jogo = Jogo::novo(participantes.len());
     
-    let (mut rng, seed) = gen_rng(args.seed);
-    participants.shuffle(&mut rng);
-    assert_ne!(read_participants(path).unwrap(), participants);
-
-    let mut table = Table::new();
-    table.add_row(row!["Semente".underline(), seed]);
-    table.add_row(row!["Horário".underline(), chrono::offset::Local::now()]);
-    println!("{}","Sorteio: ".bold());
-    table.printstd();
-    println!("\n");
-
-    let rs = iter_send(participants.clone()).await;
-    let mut result_table = Table::new();
-    result_table.add_row(row!["N°".underline(), "Nome".underline(), "Resultado".underline()]);
-    for (idx, i) in rs.iter().enumerate() {
-        result_table.add_row(row![ idx, participants.get(idx).unwrap().nome, format!("{:?}", i)]); 
+    for p in participantes {
+        jogo.add_participante(p)
     }
 
-    println!("{}","Envios: ".bold());
-    result_table.printstd();
+    println!("Realizando sorteio");
+    let resultado = jogo.realizar_jogo();
+
+    let mut resultado_tabela = Table::new();
+    resultado_tabela.add_row(row!["Nome", "Envio deu certo?"]);
+    for (idx, email_resultado) in resultado.emails.iter().enumerate() {
+        resultado_tabela.add_row(row![format!("{:?}", resultado.participantes[idx]), format!("{:?}", email_resultado.is_some())]);
+    }
+
+    resultado_tabela.printstd();
+
+    println!("{}", format!("Semente utilizada: {}", resultado.seed).bold().green());
+
 }

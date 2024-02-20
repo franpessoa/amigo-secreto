@@ -1,20 +1,13 @@
 use std::path::Path;
 use serde::{Deserialize, Serialize};
 
-/// Struct that represents a game participant
+/// Um único participante do jogo
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Participante {
     #[serde(rename = "Nome")]
     pub nome: String,
     #[serde(rename = "Email")]
     pub email: String
-}
-
-// Internal representation of JSON document
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Jogo {
-    pub participantes: Vec<Participante>,
-    pub seed: Option<String>
 }
 
 /// Reads the participants of a game from a JSON file
