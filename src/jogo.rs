@@ -26,6 +26,10 @@ impl Jogo {
         self.participantes.push(participante)
     }
 
+    pub fn set_seed(&mut self, seed: Option<String>) {
+        self.seed = seed
+    }
+
     pub fn realizar_jogo(&mut self) -> JogoResultado {
         let (mut rng, seed) = gen_rng(self.seed.clone());
         self.participantes.shuffle(&mut rng);

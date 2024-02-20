@@ -34,6 +34,8 @@ fn main() {
         jogo.add_participante(p)
     }
 
+    jogo.set_seed(args.seed);
+
     println!("Realizando sorteio");
     let resultado = jogo.realizar_jogo();
 
