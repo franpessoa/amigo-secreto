@@ -7,7 +7,7 @@
     * [Como rodar](#rodando)
  * [Licença](#licença)
 
-## Funcionamento do sorteio
+## Funcionamento do sorteio - uma explicação para leigos
 
 A principar estrutura de dados é o participante, definido como 
 ```rust
